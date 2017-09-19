@@ -1,11 +1,19 @@
 module Nagareboshi
   module Sender
     class << self
-      
+
       def publish(urls)
         urls = [urls] if urls.is_a?(String)
         body = urls.map do |url|
           URI.encode_www_form({'hub.mode' => 'publish', 'hub.url' => url})
+        end.join('&')
+        shooting_star(body)
+      end
+
+      def subscribe(urls, callback)
+        urls = [urls] if urls.is_a?(String)
+        body = urls.map do |url|
+          URI.encode_www_form({'hub.mode' => 'subscribe', 'hub.topic' => url, 'hub.callback' => callback})
         end.join('&')
         shooting_star(body)
       end

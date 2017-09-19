@@ -23,7 +23,17 @@ describe Nagareboshi::Sender do
       expect(sender.publish("test")).to be_an_instance_of(Net::HTTPOK)
     end
   end
-  
+
+  context "subscribe" do
+    it "called shooting star" do
+      expect(sender).to receive(:shooting_star).with("hub.mode=subscribe&hub.topic=test&hub.callback=test")
+      expect(sender.subscribe('test', 'test')).to be_nil
+    end
+    it "return HTTPOK" do
+      expect(sender.subscribe('test', 'test')).to be_an_instance_of(Net::HTTPOK)
+    end
+  end
+
   describe "private methods" do
     context "shooting_star" do
       subject { sender.send(:shooting_star, "test") }
@@ -127,7 +137,7 @@ describe Nagareboshi::Sender do
 
     context "ssl?" do
       subject { sender.send(:ssl?) }
-      
+
       it "use_ssl is true" do
         allow(Nagareboshi.configuration).to receive(:use_ssl).and_return(true)
         expect(subject).to be_truthy
